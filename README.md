@@ -1,7 +1,7 @@
 # 项目说明
 
 Python 3.13.2  
-FastAPI + SQLite
+Use FastAPI + SQLite
 
 ## 安装依赖
 
