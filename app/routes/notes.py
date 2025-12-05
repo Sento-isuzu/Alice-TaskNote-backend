@@ -9,6 +9,6 @@ router = APIRouter(prefix="/notes", tags=["Notes"])
 def create_note(note: schemas.NoteCreate, db: Session = Depends(get_db)):
     return crud.create_note(db, note)
 
-@router.get("/", response_model=list[schemas.TodoOut])
+@router.get("/", response_model=list[schemas.NoteOut])
 def read_todos(db: Session = Depends(get_db)):
-    return crud.get_todos(db)
+    return crud.get_notes(db)
