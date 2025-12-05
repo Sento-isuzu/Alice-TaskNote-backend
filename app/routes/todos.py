@@ -6,6 +6,7 @@ from typing import Optional
 
 router = APIRouter(prefix="/api/tasks", tags=["todos"])
 
+# 1. 获取所有任务，支持搜索
 @router.get("/", response_model=list[schemas.TaskResponse])
 def read_and_search_tasks(
     q: Optional[str] = None,  
