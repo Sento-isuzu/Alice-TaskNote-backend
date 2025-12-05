@@ -79,28 +79,44 @@ def create_task(db: Session, task: schemas.TaskCreate):
 # 4. 更新任务
 def update_task(db: Session, task_id: int, task: schemas.TaskUpdate):
     db_task = db.query(models.Task).filter(models.Task.id == task_id).first()
-    if not db_task:
+    if db_task is None:
         return None
     
-    if "tags" in task.dict(exclude_unset=True):
-        # 先删除现有关联
+    update_data = task.model_dump(exclude_unset=True)
+
+    if "tags" in update_data:
+
         db.query(models.TaskTag).filter(models.TaskTag.task_id == task_id).delete()
-        # 新增关联（同创建逻辑）
-        if task.tags:
-            tags = db.query(models.Tag).filter(models.Tag.id.in_(task.tags)).all()
-            if len(tags) != len(task.tags):
-                raise HTTPException(status_code=400, detail="Invalid tag ID(s)")
+        
+        tag_ids = update_data["tags"]
+        if tag_ids:
+            # 批量查询标签是否存在
+            tags = db.query(models.Tag).filter(models.Tag.id.in_(tag_ids)).all()
+            if len(tags) != len(tag_ids):
+
+                 pass 
+            
             for tag in tags:
                 task_tag = models.TaskTag(task_id=task_id, tag_id=tag.id)
                 db.add(task_tag)
 
-    update_data = task.dict(exclude_unset=True)
+    #  处理常规字段
     for key, value in update_data.items():
-        if key != "tags":  # 标签单独处理，先忽略
+        if key == "tags": 
+            continue
+            
+        if hasattr(db_task, key):
             setattr(db_task, key, value)
+
     db_task.updatedAt = datetime.now()
-    db.commit()
-    db.refresh(db_task)
+    
+    try:
+        db.commit()
+        db.refresh(db_task)
+    except Exception as e:
+        db.rollback()
+        raise e
+        
     return get_task(db, db_task.id)
 
 # 5. 删除任务

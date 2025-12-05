@@ -7,7 +7,7 @@ from typing import Optional
 router = APIRouter(prefix="/api/tasks", tags=["todos"])
 
 @router.get("/", response_model=list[schemas.TaskResponse])
-def read_tasks(
+def read_and_search_tasks(
     q: Optional[str] = None,  
     db: Session = Depends(get_db)
 ):
