@@ -3,7 +3,7 @@ from . import models, schemas
 
 # TODO
 def create_todo(db: Session, todo: schemas.TodoCreate):
-    db_todo = models.Todo(title=todo.title, is_done=todo.is_done)
+    db_todo = models.Todo(**todo.model_dump())
     db.add(db_todo)
     db.commit()
     db.refresh(db_todo)
@@ -12,9 +12,9 @@ def create_todo(db: Session, todo: schemas.TodoCreate):
 def get_todos(db: Session):
     return db.query(models.Todo).all()
 
-# 笔记
+# NOTE
 def create_note(db: Session, note: schemas.NoteCreate):
-    db_note = models.Note(title=note.title, content=note.content)
+    db_note = models.Note(**note.model_dump())
     db.add(db_note)
     db.commit()
     db.refresh(db_note)
