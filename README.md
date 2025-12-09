@@ -13,7 +13,7 @@ pip install fastapi uvicorn[standard] sqlalchemy python-multipart pydantic
 
 ```bash
 venv\Scripts\activate
-uvicorn app.main:app --reload
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 访问：
